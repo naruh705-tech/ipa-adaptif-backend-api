@@ -5,15 +5,15 @@ let _supabase: SupabaseClient | null = null;
 export function getSupabase(): SupabaseClient {
   if (!_supabase) {
     const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
 
-    if (!supabaseUrl || !supabaseServiceKey) {
+    if (!supabaseUrl || !supabaseKey) {
       throw new Error(
-        "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY environment variables"
+        "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY environment variables"
       );
     }
 
-    _supabase = createClient(supabaseUrl, supabaseServiceKey);
+    _supabase = createClient(supabaseUrl, supabaseKey);
   }
   return _supabase;
 }
