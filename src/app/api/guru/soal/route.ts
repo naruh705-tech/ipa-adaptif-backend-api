@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
   try {
     const url = request.nextUrl;
     const search = url.searchParams.get("search");
+    const tingkat = url.searchParams.get("tingkat");
     const page = parseInt(url.searchParams.get("page") || "1");
     const limit = parseInt(url.searchParams.get("limit") || "20");
     const offset = (page - 1) * limit;
@@ -23,6 +24,10 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       query = query.or(`judul.ilike.%${search}%,deskripsi.ilike.%${search}%`);
+    }
+
+    if (tingkat) {
+      query = query.eq("tingkat", tingkat);
     }
 
     query = query.order("created_at", { ascending: false }).range(offset, offset + limit - 1);
@@ -55,11 +60,14 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { judul, deskripsi, video_url, foto_url } = body;
+    const { judul, deskripsi, video_url, foto_url, tingkat } = body;
 
     if (!judul || !deskripsi) {
       return errorResponse("Judul dan deskripsi harus diisi", 400);
     }
+
+    const validTingkat = ["pretest", "mudah", "sedang", "sulit"];
+    const soalTingkat = tingkat && validTingkat.includes(tingkat) ? tingkat : "pretest";
 
     const id = uuidv4();
 
@@ -71,6 +79,7 @@ export async function POST(request: NextRequest) {
         deskripsi,
         video_url: video_url || null,
         foto_url: foto_url || null,
+        tingkat: soalTingkat,
         guru_id: user.id,
       })
       .select("*")

@@ -43,13 +43,14 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { judul, deskripsi, video_url, foto_url } = body;
+    const { judul, deskripsi, video_url, foto_url, tingkat } = body;
 
     const updateData: Record<string, string | null> = {};
     if (judul !== undefined) updateData.judul = judul;
     if (deskripsi !== undefined) updateData.deskripsi = deskripsi;
     if (video_url !== undefined) updateData.video_url = video_url;
     if (foto_url !== undefined) updateData.foto_url = foto_url;
+    if (tingkat !== undefined) updateData.tingkat = tingkat;
 
     if (Object.keys(updateData).length === 0) {
       return errorResponse("Tidak ada data yang diubah", 400);
