@@ -27,7 +27,7 @@ export async function GET(
 
     const { data, error, count } = await getSupabase()
       .from("nilai")
-      .select("id, siswa_id, soal_id, nilai, catatan, created_at, soal(judul)", { count: "exact" })
+      .select("id, siswa_id, soal_id, nilai, catatan, created_at", { count: "exact" })
       .eq("siswa_id", id)
       .order("created_at", { ascending: false })
       .range(offset, offset + limit - 1);
@@ -55,17 +55,22 @@ export async function POST(
   { params }: { params: Promise<{ id: string }> }
 ) {
   const user = getTokenFromHeaders(request.headers);
-  if (!user || user.role !== "guru") {
-    return errorResponse("Unauthorized - hanya guru yang dapat mengakses", 401);
+  if (!user) {
+    return errorResponse("Unauthorized", 401);
   }
 
   try {
     const { id: siswa_id } = await params;
+
+    if (user.role === "siswa" && user.id !== siswa_id) {
+      return errorResponse("Forbidden", 403);
+    }
+
     const body = await request.json();
     const { soal_id, nilai, catatan } = body;
 
-    if (!soal_id || nilai === undefined || nilai === null) {
-      return errorResponse("soal_id dan nilai harus diisi", 400);
+    if (nilai === undefined || nilai === null) {
+      return errorResponse("nilai harus diisi", 400);
     }
 
     if (typeof nilai !== "number" || nilai < 0 || nilai > 100) {
@@ -82,16 +87,6 @@ export async function POST(
       return errorResponse("Siswa tidak ditemukan", 404);
     }
 
-    const { data: soal } = await getSupabase()
-      .from("soal")
-      .select("id")
-      .eq("id", soal_id)
-      .single();
-
-    if (!soal) {
-      return errorResponse("Soal tidak ditemukan", 404);
-    }
-
     const id = uuidv4();
 
     const { data, error } = await getSupabase()
@@ -99,7 +94,7 @@ export async function POST(
       .insert({
         id,
         siswa_id,
-        soal_id,
+        soal_id: soal_id || null,
         nilai,
         catatan: catatan || null,
       })

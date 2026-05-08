@@ -80,7 +80,7 @@ Server berjalan di `http://localhost:3000`.
 | Method | Endpoint | Deskripsi |
 |--------|----------|-----------|
 | GET | `/api/siswa/[id]/nilai` | Riwayat nilai siswa |
-| POST | `/api/siswa/[id]/nilai` | Tambah nilai (guru only) |
+| POST | `/api/siswa/[id]/nilai` | Tambah nilai (guru atau siswa sendiri) |
 
 ### Soal (Guru Only - CRUD)
 

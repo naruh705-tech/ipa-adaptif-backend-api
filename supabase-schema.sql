@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS soal (
 CREATE TABLE IF NOT EXISTS nilai (
   id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
   siswa_id UUID NOT NULL REFERENCES siswa(id) ON DELETE CASCADE,
-  soal_id UUID NOT NULL REFERENCES soal(id) ON DELETE CASCADE,
+  soal_id TEXT,
   nilai NUMERIC(5, 2) NOT NULL CHECK (nilai >= 0 AND nilai <= 100),
   catatan TEXT,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
