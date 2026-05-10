@@ -1,5 +1,6 @@
 import { NextRequest } from "next/server";
-import { GURU_CREDENTIALS } from "@/lib/types";
+import bcrypt from "bcryptjs";
+import { getSupabase } from "@/lib/supabase";
 import { generateToken } from "@/lib/auth";
 import { successResponse, errorResponse } from "@/lib/response";
 
@@ -12,11 +13,18 @@ export async function POST(request: NextRequest) {
       return errorResponse("Nama dan password harus diisi", 400);
     }
 
-    const guru = GURU_CREDENTIALS.find(
-      (g) => g.nama === nama && g.password === password
-    );
+    const { data: guru, error } = await getSupabase()
+      .from("guru")
+      .select("*")
+      .eq("nama", nama)
+      .single();
 
-    if (!guru) {
+    if (error || !guru) {
+      return errorResponse("Nama atau password salah", 401);
+    }
+
+    const valid = await bcrypt.compare(password, guru.password);
+    if (!valid) {
       return errorResponse("Nama atau password salah", 401);
     }
 
@@ -27,7 +35,17 @@ export async function POST(request: NextRequest) {
     });
 
     return successResponse(
-      { token, guru: { id: guru.id, nama: guru.nama } },
+      {
+        token,
+        guru: {
+          id: guru.id,
+          nama: guru.nama,
+          nip: guru.nip,
+          sekolah: guru.sekolah,
+          mapel: guru.mapel,
+          foto_profil: guru.foto_profil,
+        },
+      },
       "Login berhasil"
     );
   } catch {

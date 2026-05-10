@@ -56,8 +56,15 @@ Server berjalan di `http://localhost:3000`.
 
 | Method | Endpoint | Deskripsi |
 |--------|----------|-----------|
-| POST | `/api/auth/login-guru` | Login guru (static credentials) |
+| POST | `/api/auth/login-guru` | Login guru dengan nama & password dari database |
 | POST | `/api/auth/login-siswa` | Login siswa dengan NIM & password |
+
+### Profil Guru (Guru Only)
+
+| Method | Endpoint | Deskripsi |
+|--------|----------|-----------|
+| GET | `/api/guru/profil` | Ambil profil guru yang sedang login |
+| PATCH | `/api/guru/profil` | Update profil guru (nama, password, nip, sekolah, mapel, foto) |
 
 ### Siswa (Guru Only - CRUD)
 
@@ -98,7 +105,9 @@ Server berjalan di `http://localhost:3000`.
 |--------|----------|-----------|
 | POST | `/api/upload` | Upload foto atau video |
 
-## Login Guru (Static)
+## Login Guru
+
+Guru disimpan di tabel `guru` di database. Default akun setelah migrasi:
 
 ```json
 {
@@ -106,6 +115,8 @@ Server berjalan di `http://localhost:3000`.
   "password": "guru123"
 }
 ```
+
+> **Note:** Jalankan `migration-guru.sql` di Supabase SQL Editor untuk membuat tabel guru dan insert akun default.
 
 ## Contoh Request
 
@@ -115,6 +126,15 @@ Server berjalan di `http://localhost:3000`.
 curl -X POST http://localhost:3000/api/auth/login-guru \
   -H "Content-Type: application/json" \
   -d '{"nama": "Admin Guru", "password": "guru123"}'
+```
+
+### Update Profil Guru
+
+```bash
+curl -X PATCH http://localhost:3000/api/guru/profil \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer <token>" \
+  -d '{"nama": "Ibu Siti", "nip": "198507152010012009", "sekolah": "SLB Negeri Harapan", "mapel": "IPA", "password": "newpassword123"}'
 ```
 
 ### Tambah Siswa
