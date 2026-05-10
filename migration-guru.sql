@@ -17,6 +17,9 @@ CREATE TABLE IF NOT EXISTS guru (
   updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
+-- Disable RLS (Supabase enables RLS by default, blocking anon key access)
+ALTER TABLE guru DISABLE ROW LEVEL SECURITY;
+
 -- Index
 CREATE INDEX IF NOT EXISTS idx_guru_nama ON guru(nama);
 
