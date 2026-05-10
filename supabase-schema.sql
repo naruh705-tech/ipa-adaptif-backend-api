@@ -63,6 +63,14 @@ CREATE TABLE IF NOT EXISTS nilai (
 );
 
 -- ============================================
+-- Disable RLS (using anon key)
+-- ============================================
+ALTER TABLE siswa DISABLE ROW LEVEL SECURITY;
+ALTER TABLE guru DISABLE ROW LEVEL SECURITY;
+ALTER TABLE soal DISABLE ROW LEVEL SECURITY;
+ALTER TABLE nilai DISABLE ROW LEVEL SECURITY;
+
+-- ============================================
 -- Indexes
 -- ============================================
 CREATE INDEX IF NOT EXISTS idx_siswa_nim ON siswa(nim);
