@@ -62,8 +62,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const { judul, deskripsi, video_url, foto_url, tingkat } = body;
 
-    if (!judul || !deskripsi) {
-      return errorResponse("Judul dan deskripsi harus diisi", 400);
+    if (!deskripsi) {
+      return errorResponse("Deskripsi (pilihan jawaban) harus diisi", 400);
     }
 
     const validTingkat = ["pretest", "mudah", "sedang", "sulit"];
@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       .from("soal")
       .insert({
         id,
-        judul,
+        judul: judul || "",
         deskripsi,
         video_url: video_url || null,
         foto_url: foto_url || null,
