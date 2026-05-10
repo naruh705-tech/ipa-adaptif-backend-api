@@ -22,6 +22,21 @@ CREATE TABLE IF NOT EXISTS siswa (
 );
 
 -- ============================================
+-- Table: guru (Teachers)
+-- ============================================
+CREATE TABLE IF NOT EXISTS guru (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  nama VARCHAR(255) NOT NULL,
+  password TEXT NOT NULL,
+  nip VARCHAR(50),
+  sekolah VARCHAR(255),
+  mapel VARCHAR(100),
+  foto_profil TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- ============================================
 -- Table: soal (Questions)
 -- ============================================
 CREATE TABLE IF NOT EXISTS soal (
@@ -53,6 +68,7 @@ CREATE TABLE IF NOT EXISTS nilai (
 CREATE INDEX IF NOT EXISTS idx_siswa_nim ON siswa(nim);
 CREATE INDEX IF NOT EXISTS idx_siswa_kelas ON siswa(kelas);
 CREATE INDEX IF NOT EXISTS idx_siswa_status ON siswa(status);
+CREATE INDEX IF NOT EXISTS idx_guru_nama ON guru(nama);
 CREATE INDEX IF NOT EXISTS idx_soal_guru_id ON soal(guru_id);
 CREATE INDEX IF NOT EXISTS idx_nilai_siswa_id ON nilai(siswa_id);
 CREATE INDEX IF NOT EXISTS idx_nilai_soal_id ON nilai(soal_id);
@@ -70,6 +86,11 @@ $$ LANGUAGE plpgsql;
 
 CREATE TRIGGER update_siswa_updated_at
   BEFORE UPDATE ON siswa
+  FOR EACH ROW
+  EXECUTE FUNCTION update_updated_at_column();
+
+CREATE TRIGGER update_guru_updated_at
+  BEFORE UPDATE ON guru
   FOR EACH ROW
   EXECUTE FUNCTION update_updated_at_column();
 

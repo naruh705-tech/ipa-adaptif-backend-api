@@ -14,6 +14,12 @@ export interface Guru {
   id: string;
   nama: string;
   password: string;
+  nip?: string | null;
+  sekolah?: string | null;
+  mapel?: string | null;
+  foto_profil?: string | null;
+  created_at?: string;
+  updated_at?: string;
 }
 
 export interface Soal {
@@ -42,11 +48,4 @@ export interface UploadResult {
   type: "video" | "foto";
 }
 
-// Static guru credentials
-export const GURU_CREDENTIALS: Guru[] = [
-  {
-    id: "guru-001",
-    nama: "Admin Guru",
-    password: "guru123",
-  },
-];
+
