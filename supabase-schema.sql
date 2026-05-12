@@ -37,6 +37,22 @@ CREATE TABLE IF NOT EXISTS guru (
 );
 
 -- ============================================
+-- Table: materi (Learning Materials)
+-- ============================================
+CREATE TABLE IF NOT EXISTS materi (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  nama VARCHAR(255) NOT NULL,
+  deskripsi TEXT NOT NULL,
+  manfaat TEXT NOT NULL,
+  gambar_url TEXT,
+  video_url TEXT,
+  urutan INT NOT NULL DEFAULT 0,
+  guru_id VARCHAR(50) NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- ============================================
 -- Table: soal (Questions)
 -- ============================================
 CREATE TABLE IF NOT EXISTS soal (
@@ -67,6 +83,7 @@ CREATE TABLE IF NOT EXISTS nilai (
 -- ============================================
 ALTER TABLE siswa DISABLE ROW LEVEL SECURITY;
 ALTER TABLE guru DISABLE ROW LEVEL SECURITY;
+ALTER TABLE materi DISABLE ROW LEVEL SECURITY;
 ALTER TABLE soal DISABLE ROW LEVEL SECURITY;
 ALTER TABLE nilai DISABLE ROW LEVEL SECURITY;
 
@@ -77,6 +94,7 @@ CREATE INDEX IF NOT EXISTS idx_siswa_nim ON siswa(nim);
 CREATE INDEX IF NOT EXISTS idx_siswa_kelas ON siswa(kelas);
 CREATE INDEX IF NOT EXISTS idx_siswa_status ON siswa(status);
 CREATE INDEX IF NOT EXISTS idx_guru_nama ON guru(nama);
+CREATE INDEX IF NOT EXISTS idx_materi_guru_id ON materi(guru_id);
 CREATE INDEX IF NOT EXISTS idx_soal_guru_id ON soal(guru_id);
 CREATE INDEX IF NOT EXISTS idx_nilai_siswa_id ON nilai(siswa_id);
 CREATE INDEX IF NOT EXISTS idx_nilai_soal_id ON nilai(soal_id);

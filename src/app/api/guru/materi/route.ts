@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { nama, deskripsi, manfaat, gambar_url, urutan } = body;
+    const { nama, deskripsi, manfaat, gambar_url, video_url, urutan } = body;
 
     if (!nama || !deskripsi || !manfaat) {
       return errorResponse("Nama, deskripsi, dan manfaat harus diisi", 400);
@@ -71,6 +71,7 @@ export async function POST(request: NextRequest) {
         deskripsi,
         manfaat,
         gambar_url: gambar_url || null,
+        video_url: video_url || null,
         urutan: urutan || 0,
         guru_id: user.id,
       })
