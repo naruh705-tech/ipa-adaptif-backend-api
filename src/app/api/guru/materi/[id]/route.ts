@@ -42,13 +42,14 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { nama, deskripsi, manfaat, gambar_url, urutan } = body;
+    const { nama, deskripsi, manfaat, gambar_url, video_url, urutan } = body;
 
     const updateData: Record<string, unknown> = {};
     if (nama !== undefined) updateData.nama = nama;
     if (deskripsi !== undefined) updateData.deskripsi = deskripsi;
     if (manfaat !== undefined) updateData.manfaat = manfaat;
     if (gambar_url !== undefined) updateData.gambar_url = gambar_url;
+    if (video_url !== undefined) updateData.video_url = video_url;
     if (urutan !== undefined) updateData.urutan = urutan;
 
     const { data, error } = await getSupabase()
