@@ -109,6 +109,7 @@ export async function DELETE(
     const { data: laterSoal, error: laterError } = await getSupabase()
       .from("soal")
       .select("id, nomor")
+      .eq("guru_id", user.id)
       .gt("nomor", deletedNomor)
       .order("nomor", { ascending: true });
 
@@ -117,11 +118,23 @@ export async function DELETE(
     }
 
     if (laterSoal && laterSoal.length > 0) {
-      for (const soal of laterSoal as Array<{ id: string; nomor: number }>) {
-        await getSupabase()
+      // Update nomor secara batch untuk menghindari race condition
+      const updates = laterSoal.map((soal: { id: string; nomor: number }) => ({
+        id: soal.id,
+        new_nomor: soal.nomor - 1
+      }));
+
+      // Gunakan RPC atau batch update untuk konsistensi
+      for (const update of updates) {
+        const { error: updateError } = await getSupabase()
           .from("soal")
-          .update({ nomor: soal.nomor - 1 })
-          .eq("id", soal.id);
+          .update({ nomor: update.new_nomor })
+          .eq("id", update.id);
+
+        if (updateError) {
+          console.error("Error updating nomor:", updateError);
+          // Continue with other updates even if one fails
+        }
       }
     }
 

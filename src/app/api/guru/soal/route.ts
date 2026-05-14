@@ -20,7 +20,8 @@ export async function GET(request: NextRequest) {
 
     let query = getSupabase()
       .from("soal")
-      .select("*", { count: "exact" });
+      .select("*", { count: "exact" })
+      .eq("guru_id", user.id);
 
     if (search) {
       query = query.or(`judul.ilike.%${search}%,deskripsi.ilike.%${search}%`);
@@ -74,6 +75,7 @@ export async function POST(request: NextRequest) {
     const { data: maxData, error: maxError } = await getSupabase()
       .from("soal")
       .select("nomor")
+      .eq("guru_id", user.id)
       .order("nomor", { ascending: false })
       .limit(1);
 
