@@ -21,9 +21,15 @@ Backend telah diperbarui untuk menggunakan sistem penomoran soal yang **permanen
    - Kolom `nomor INT NOT NULL DEFAULT 0` sudah ditambahkan ke tabel `soal`
    - Data existing sudah di-renumber berdasarkan `ROW_NUMBER() OVER (ORDER BY created_at)`
 
-3. **API GET Soal** (`/api/guru/soal`)
+3. **Scope Nomor** 🔧 **PERBAIKAN PENTING**
+   - Nomor sekarang **scoped per guru** (bukan global)
+   - Setiap guru punya penomoran soal sendiri mulai dari 1
+   - Contoh: Guru A soal 1,2,3; Guru B soal 1,2,3 (bukan 4,5,6)
+
+4. **API GET Soal** (`/api/guru/soal`)
    - Response sekarang include field `nomor`
    - Data sudah terurut `ORDER BY nomor ASC`
+   - **Filter berdasarkan `guru_id`** - hanya tampilkan soal milik guru yang login
    - Contoh response:
      ```json
      {
@@ -49,13 +55,15 @@ Backend telah diperbarui untuk menggunakan sistem penomoran soal yang **permanen
    - Frontend tidak perlu menghitung atau mengirim nomor
    - Contoh: jika soal terakhir punya nomor 5, soal baru akan nomor 6
 
-5. **API DELETE Soal** (`/api/guru/soal/:id`)
+5. **API DELETE Soal** (`/api/guru/soal/:id`) **🔧 DIPERBAIKI**
    - Setelah soal dihapus, semua soal dengan nomor lebih besar otomatis di-renumber
+   - **Scope per guru** - hanya renumber soal milik guru yang sama
    - **Contoh**:
-     - Sebelum: Soal 1, 2, 3, 4, 5
-     - Hapus soal nomor 3
-     - Sesudah: Soal 1, 2, 3, 4 (nomor 4 dan 5 otomatis berkurang)
+     - Guru A punya soal: 1, 2, 3, 4, 5
+     - Hapus soal nomor 3 milik Guru A
+     - Sesudah: 1, 2, 3, 4 (nomor 4 dan 5 otomatis berkurang)
    - Tidak ada celah nomor
+   - **Logic diperbaiki**: Batch update untuk menghindari race condition
 
 ---
 
