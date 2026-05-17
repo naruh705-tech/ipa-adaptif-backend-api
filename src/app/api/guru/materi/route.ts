@@ -13,8 +13,9 @@ export async function GET(request: NextRequest) {
   try {
     const url = request.nextUrl;
     const search = url.searchParams.get("search");
+    const tingkat = url.searchParams.get("tingkat");
     const page = parseInt(url.searchParams.get("page") || "1");
-    const limit = parseInt(url.searchParams.get("limit") || "50");
+    const limit = parseInt(url.searchParams.get("limit") || "100");
     const offset = (page - 1) * limit;
 
     let query = getSupabase()
@@ -23,6 +24,10 @@ export async function GET(request: NextRequest) {
 
     if (search) {
       query = query.or(`nama.ilike.%${search}%,deskripsi.ilike.%${search}%`);
+    }
+
+    if (tingkat) {
+      query = query.eq("tingkat", tingkat);
     }
 
     query = query.order("urutan", { ascending: true }).range(offset, offset + limit - 1);
@@ -55,10 +60,19 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { nama, deskripsi, manfaat, gambar_url, video_url, urutan } = body;
+    const { nama, deskripsi, manfaat, gambar_url, video_url, urutan, tingkat } = body;
 
     if (!nama || !deskripsi || !manfaat) {
       return errorResponse("Nama, deskripsi, dan manfaat harus diisi", 400);
+    }
+
+    if (!tingkat) {
+      return errorResponse("Field 'tingkat' harus diisi (mudah / sedang / sulit)", 400);
+    }
+
+    const validTingkat = ["mudah", "sedang", "sulit"];
+    if (!validTingkat.includes(tingkat)) {
+      return errorResponse("Nilai 'tingkat' tidak valid. Gunakan: mudah, sedang, atau sulit", 400);
     }
 
     const id = uuidv4();
@@ -73,6 +87,7 @@ export async function POST(request: NextRequest) {
         gambar_url: gambar_url || null,
         video_url: video_url || null,
         urutan: urutan || 0,
+        tingkat,
         guru_id: user.id,
       })
       .select("*")

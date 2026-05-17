@@ -42,7 +42,7 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { nama, deskripsi, manfaat, gambar_url, video_url, urutan } = body;
+    const { nama, deskripsi, manfaat, gambar_url, video_url, urutan, tingkat } = body;
 
     const updateData: Record<string, unknown> = {};
     if (nama !== undefined) updateData.nama = nama;
@@ -51,6 +51,17 @@ export async function PUT(
     if (gambar_url !== undefined) updateData.gambar_url = gambar_url;
     if (video_url !== undefined) updateData.video_url = video_url;
     if (urutan !== undefined) updateData.urutan = urutan;
+    if (tingkat !== undefined) {
+      const validTingkat = ["mudah", "sedang", "sulit"];
+      if (!validTingkat.includes(tingkat)) {
+        return errorResponse("Nilai 'tingkat' tidak valid. Gunakan: mudah, sedang, atau sulit", 400);
+      }
+      updateData.tingkat = tingkat;
+    }
+
+    if (Object.keys(updateData).length === 0) {
+      return errorResponse("Tidak ada data yang diubah", 400);
+    }
 
     const { data, error } = await getSupabase()
       .from("materi")

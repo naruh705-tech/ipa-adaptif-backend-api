@@ -42,10 +42,22 @@ export interface Nilai {
   created_at?: string;
 }
 
+export interface Materi {
+  id: string;
+  nama: string;
+  deskripsi: string;
+  manfaat: string;
+  gambar_url?: string | null;
+  video_url?: string | null;
+  urutan: number;
+  tingkat: "mudah" | "sedang" | "sulit";
+  guru_id: string;
+  created_at?: string;
+  updated_at?: string;
+}
+
 export interface UploadResult {
   url: string;
   filename: string;
   type: "video" | "foto";
 }
-
-
