@@ -42,7 +42,8 @@ export async function PUT(
   try {
     const { id } = await params;
     const body = await request.json();
-    const { nama, deskripsi, manfaat, gambar_url, video_url, urutan } = body;
+    const { nama, deskripsi, manfaat, gambar_url, video_url, urutan, tingkat } =
+      body;
 
     const updateData: Record<string, unknown> = {};
     if (nama !== undefined) updateData.nama = nama;
@@ -51,6 +52,20 @@ export async function PUT(
     if (gambar_url !== undefined) updateData.gambar_url = gambar_url;
     if (video_url !== undefined) updateData.video_url = video_url;
     if (urutan !== undefined) updateData.urutan = urutan;
+
+    if (tingkat !== undefined) {
+      const validTingkat = ["mudah", "sedang", "sulit"];
+      const normalizedTingkat = tingkat.toLowerCase().trim();
+
+      if (!validTingkat.includes(normalizedTingkat)) {
+        return errorResponse(
+          `Tingkat harus salah satu dari: ${validTingkat.join(", ")}`,
+          400
+        );
+      }
+
+      updateData.tingkat = normalizedTingkat;
+    }
 
     const { data, error } = await getSupabase()
       .from("materi")
