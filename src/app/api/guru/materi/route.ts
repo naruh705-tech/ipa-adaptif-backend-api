@@ -55,7 +55,15 @@ export async function POST(request: NextRequest) {
 
   try {
     const body = await request.json();
-    const { nama, deskripsi, manfaat, gambar_url, video_url, urutan } = body;
+    const { nama, deskripsi, manfaat, gambar_url, video_url, urutan, tingkat } = body;
+
+    // Validasi tingkat kesulitan
+    const validTingkat = ["mudah", "sedang", "sulit"];
+    const normalizedTingkat = tingkat?.toLowerCase().trim() || "mudah";
+
+    if (!validTingkat.includes(normalizedTingkat)) {
+      return errorResponse(`Tingkat harus salah satu dari: ${validTingkat.join(", ")}`, 400);
+    }
 
     if (!nama || !deskripsi || !manfaat) {
       return errorResponse("Nama, deskripsi, dan manfaat harus diisi", 400);
@@ -74,6 +82,7 @@ export async function POST(request: NextRequest) {
         video_url: video_url || null,
         urutan: urutan || 0,
         guru_id: user.id,
+        tingkat: normalizedTingkat,
       })
       .select("*")
       .single();
